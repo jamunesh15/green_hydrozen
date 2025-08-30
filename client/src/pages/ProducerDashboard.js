@@ -171,7 +171,7 @@ const ProducerDashboard = () => {
                   <div className="p-6">
                     <h3 className="text-xl font-bold mb-2">{listing.title}</h3>
                     <div className="flex items-center mb-4">
-                      <span className="text-2xl font-bold text-primary">${listing.pricePerKg}</span>
+                      <span className="text-2xl font-bold text-primary">₹{listing.price}</span>
                       <span className="text-gray-400 ml-2">per kg</span>
                     </div>
                     <div className="space-y-2 mb-4">

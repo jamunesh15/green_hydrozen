@@ -10,6 +10,8 @@ import CertifierDashboard from './pages/CertifierDashboard';
 import BuyerDashboard from './pages/BuyerDashboard';
 import Marketplace from './pages/Marketplace';
 import ListingDetail from './pages/ListingDetail';
+import Checkout from './pages/Checkout';
+import PaymentStatus from './pages/PaymentStatus';
 import ApplicationForm from './pages/ApplicationForm';
 import CreateListing from './pages/CreateListing';
 import CloudinaryTestPage from './pages/CloudinaryTestPage';
@@ -78,6 +80,22 @@ function App() {
             {/* Marketplace Routes */}
             <Route path="/marketplace" element={<Marketplace />} />
             <Route path="/marketplace/:id" element={<ListingDetail />} />
+            <Route 
+              path="/checkout" 
+              element={
+                <ProtectedRoute allowedRoles={['buyer']}>
+                  <Checkout />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/payment/status" 
+              element={
+                <ProtectedRoute allowedRoles={['buyer']}>
+                  <PaymentStatus />
+                </ProtectedRoute>
+              } 
+            />
             
             {/* Test Routes */}
             <Route 

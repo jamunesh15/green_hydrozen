@@ -5,7 +5,16 @@ const dotenv = require('dotenv');
 const path = require('path');
 
 // Load environment variables
-require("dotenv").config();
+const envPath = path.resolve(__dirname, './config.env');
+console.log('Loading environment variables from:', envPath);
+dotenv.config({ path: envPath });
+
+// Debug environment variables
+console.log('Environment variables loaded:');
+console.log('PORT:', process.env.PORT);
+console.log('MONGO_URI:', process.env.MONGO_URI);
+console.log('JWT_SECRET exists:', !!process.env.JWT_SECRET);
+console.log('RAZORPAY_KEY_ID exists:', !!process.env.RAZORPAY_KEY_ID);
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -19,14 +28,14 @@ app.use(cors({
 }));
 app.use(express.json({limit: '50mb'}));  // Increase payload size limit
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
-
+     
 // Serve uploaded files
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Database connection
-mongoose.connect(process.env.MONGODB_URI, {
+mongoose.connect(process.env.MONGO_URI, {
     useNewUrlParser: true,
-    useUnifiedTopology: true,
+    useUnifiedTopology: true
 })
 .then(() => console.log('MongoDB connected successfully'))
 .catch(err => console.error('MongoDB connection error:', err));

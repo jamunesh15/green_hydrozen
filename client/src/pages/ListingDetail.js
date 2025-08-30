@@ -184,7 +184,7 @@ const ListingDetail = () => {
               
               <div className="mb-6">
                 <div className="flex items-center mb-2">
-                  <span className="text-3xl font-bold text-primary">${listing.price || listing.pricePerKg || 0}</span>
+                  <span className="text-3xl font-bold text-primary">₹{listing.price || 0}</span>
                   <span className="text-gray-400 ml-2">per kg</span>
                 </div>
                 <p className="text-gray-400">
@@ -220,15 +220,15 @@ const ListingDetail = () => {
                     <>
                       <div className="flex justify-between py-2 border-b border-gray-700">
                         <span className="text-gray-400">Subtotal</span>
-                        <span>${subtotal.toLocaleString()}</span>
+                        <span>₹{subtotal.toLocaleString()}</span>
                       </div>
                       <div className="flex justify-between py-2 border-b border-gray-700">
                         <span className="text-gray-400">Transaction Fee (3%)</span>
-                        <span>${fee.toLocaleString()}</span>
+                        <span>₹{fee.toLocaleString()}</span>
                       </div>
                       <div className="flex justify-between py-2 font-bold">
                         <span>Total</span>
-                        <span>${total.toLocaleString()}</span>
+                        <span>₹{total.toLocaleString()}</span>
                       </div>
                     </>
                   );
@@ -264,7 +264,7 @@ const ListingDetail = () => {
           <div className="bg-darksec rounded-xl max-w-md w-full p-8">
             <h3 className="text-xl font-bold mb-4">Confirm Purchase</h3>
             <p className="mb-6">
-              You are about to purchase {quantity} kg of hydrogen for ${(quantity * (listing.price || listing.pricePerKg || 0) * 1.03).toLocaleString()}.
+              You are about to purchase {quantity} kg of hydrogen for ₹{(quantity * (listing.price || 0) * 1.03).toLocaleString()}.
             </p>
             <div className="flex space-x-4">
               <button

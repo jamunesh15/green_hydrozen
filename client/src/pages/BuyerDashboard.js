@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import toast from 'react-hot-toast';
+import RupeePrice from '../components/RupeePrice';
 
 const BuyerDashboard = () => {
   const [transactions, setTransactions] = useState([]);
@@ -55,8 +56,8 @@ const BuyerDashboard = () => {
   }
 
   // Calculate total amount spent and kg purchased
-  const totalSpent = transactions.reduce((sum, tx) => sum + (tx.amount || 0), 0);
-  const totalPurchased = transactions.reduce((sum, tx) => sum + (tx.quantity || 0), 0);
+  const totalSpent = (transactions || []).reduce((sum, tx) => sum + (tx?.totalAmount || 0), 0);
+  const totalPurchased = (transactions || []).reduce((sum, tx) => sum + (tx?.quantity || 0), 0);
 
   return (
     <div className="min-h-screen bg-darkbg text-gray-200 p-8">
@@ -74,7 +75,9 @@ const BuyerDashboard = () => {
           </div>
           <div className="bg-darksec p-6 rounded-xl">
             <h3 className="text-gray-400 font-medium text-sm mb-2">Total Spent</h3>
-            <p className="text-3xl font-bold">${totalSpent.toLocaleString()}</p>
+            <p className="text-3xl">
+              <RupeePrice amount={totalSpent} bold size="xl" />
+            </p>
           </div>
           <div className="bg-darksec p-6 rounded-xl">
             <h3 className="text-gray-400 font-medium text-sm mb-2">Active Certificates</h3>
@@ -146,25 +149,33 @@ const BuyerDashboard = () => {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-700">
-                      {transactions.map((tx) => (
+                      {(transactions || []).map((tx) => (
                         <tr key={tx._id} className="hover:bg-gray-750">
                           <td className="px-6 py-4 whitespace-nowrap text-sm">
-                            {new Date(tx.createdAt).toLocaleDateString()}
+                            {tx.transactionDate ? new Date(tx.transactionDate).toLocaleDateString() : 'Unknown'}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm">
-                            <Link 
-                              to={`/marketplace/${tx.listing._id}`}
-                              className="text-primary hover:text-primary-light"
-                            >
-                              {tx.listing.title}
-                            </Link>
+                            {tx.listing ? (
+                              <Link 
+                                to={`/marketplace/${tx.listing._id}`}
+                                className="text-primary hover:text-primary-light"
+                              >
+                                {tx.listing.title || 'Unknown Listing'}
+                              </Link>
+                            ) : (
+                              'Unknown Listing'
+                            )}
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm">{tx.producer.name}</td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm">{tx.quantity} kg</td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm">${tx.amount}</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm">
+                            {tx.producer ? (tx.producer.companyName || tx.producer.name || 'Unknown Producer') : 'Unknown Producer'}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm">{tx.quantity || 0} kg</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm">
+                            <RupeePrice amount={tx.totalAmount || 0} size="sm" />
+                          </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm">
                             <span className="px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                              {tx.status}
+                              {tx.paymentStatus || 'Unknown'}
                             </span>
                           </td>
                         </tr>
@@ -193,14 +204,14 @@ const BuyerDashboard = () => {
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {certificates.map((cert) => (
+                {(certificates || []).map((cert) => (
                   <div key={cert._id} className="bg-darksec rounded-xl overflow-hidden">
                     <div className="p-1 bg-gradient-to-r from-green-400 to-primary"></div>
                     <div className="p-6">
                       <div className="flex justify-between items-start mb-4">
                         <div>
-                          <h3 className="text-xl font-bold mb-1">Certificate #{cert.certificateNumber}</h3>
-                          <p className="text-sm text-gray-400">Issued: {new Date(cert.issuedAt).toLocaleDateString()}</p>
+                          <h3 className="text-xl font-bold mb-1">Certificate #{cert.certificateNumber || 'N/A'}</h3>
+                          <p className="text-sm text-gray-400">Issued: {cert.transactionDate ? new Date(cert.transactionDate).toLocaleDateString() : 'Unknown'}</p>
                         </div>
                         <div className="bg-green-100 text-green-800 rounded-full px-2 py-1 text-xs font-medium">
                           Verified
@@ -210,19 +221,19 @@ const BuyerDashboard = () => {
                       <div className="space-y-3 mb-4">
                         <div>
                           <label className="block text-gray-400 text-sm">Hydrogen Quantity</label>
-                          <p className="font-medium">{cert.quantity} kg</p>
+                          <p className="font-medium">{cert.quantity || 0} kg</p>
                         </div>
                         <div>
-                          <label className="block text-gray-400 text-sm">Production Method</label>
-                          <p className="font-medium">{cert.productionMethod}</p>
+                          <label className="block text-gray-400 text-sm">Energy Source</label>
+                          <p className="font-medium">{cert.listing ? (cert.listing.energySource || 'Unknown') : 'Unknown'}</p>
                         </div>
                         <div>
-                          <label className="block text-gray-400 text-sm">Carbon Intensity</label>
-                          <p className="font-medium">{cert.carbonIntensity} g CO2eq/MJ</p>
+                          <label className="block text-gray-400 text-sm">Unit</label>
+                          <p className="font-medium">{cert.unit || 'kg'}</p>
                         </div>
                         <div>
                           <label className="block text-gray-400 text-sm">Producer</label>
-                          <p className="font-medium">{cert.producer.name}</p>
+                          <p className="font-medium">{cert.producer ? (cert.producer.companyName || cert.producer.name || 'Unknown Producer') : 'Unknown Producer'}</p>
                         </div>
                       </div>
                       

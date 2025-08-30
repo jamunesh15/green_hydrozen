@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { apiConnector } from '../services/apiConnector';
 import { marketplaceEndpoints } from '../services/apis';
+import RupeePrice from '../components/RupeePrice';
 
 const Marketplace = () => {
+  const navigate = useNavigate();
   const [listings, setListings] = useState([]);
   const [watchlist, setWatchlist] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -66,39 +68,9 @@ const Marketplace = () => {
     }
   };
   
-  const handlePurchase = async (listingId) => {
-    try {
-      // Show a loading toast
-      toast.loading('Processing your purchase...');
-      
-      // Make API call to initiate purchase
-      const result = await apiConnector(
-        "POST",
-        marketplaceEndpoints.PURCHASE_LISTING_API,
-        {
-          listingId,
-          quantity: 1 // Default quantity, could make this dynamic later
-        },
-        {
-          Authorization: `Bearer ${localStorage.getItem('token')}`
-        }
-      );
-      
-      // Dismiss loading toast
-      toast.dismiss();
-      
-      if (result.data && result.data.success) {
-        toast.success('Purchase initiated successfully!');
-        // Refresh listings to show updated availability
-        fetchListings();
-      } else {
-        toast.error(result.data?.message || 'Failed to process purchase');
-      }
-    } catch (error) {
-      toast.dismiss();
-      toast.error('Failed to process purchase');
-      console.error('Error processing purchase:', error);
-    }
+  const handlePurchase = (listing) => {
+    // Navigate to checkout page with listing details
+    navigate('/checkout', { state: { listing } });
   };
   
   const fetchListings = async () => {
@@ -243,7 +215,7 @@ const Marketplace = () => {
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-gray-400 mb-1">Price Range ($/kg)</label>
+                  <label className="block text-sm font-medium text-gray-400 mb-1">Price Range (₹/kg)</label>
                   <div className="flex space-x-2">
                     <input
                       type="number"
@@ -367,7 +339,7 @@ const Marketplace = () => {
                       <h3 className="text-xl font-bold mb-2">{listing.title || 'Untitled Listing'}</h3>
                       
                       <div className="flex items-center mb-4">
-                        <span className="text-2xl font-bold text-primary">${listing.pricePerKg || '0.00'}</span>
+                        <RupeePrice amount={listing.price || 0} bold size="xl" />
                         <span className="text-gray-400 ml-2">per kg</span>
                       </div>
                       
@@ -400,7 +372,7 @@ const Marketplace = () => {
                           View Details
                         </Link>
                         <button
-                          onClick={() => handlePurchase(listing._id)}
+                          onClick={() => handlePurchase(listing)}
                           className="flex-1 bg-green-600 hover:bg-green-700 text-white py-2 rounded-lg transition"
                         >
                           Purchase
