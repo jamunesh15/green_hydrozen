@@ -41,7 +41,7 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password, role) => {
     try {
-      const response = await axios.post('/api/auth/login', {
+      const response = await axios.post('https://green-hydrozen.vercel.app/api/auth/login', {
         email,
         password,
         role
