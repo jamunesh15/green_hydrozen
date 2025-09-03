@@ -127,8 +127,7 @@ const Checkout = () => {
                     console.error('Payment verification error:', error);
                     console.error('Error response:', error.response?.data);
                     
-                    // Even if verification fails, the payment might have succeeded
-                    // Navigate to buyer dashboard
+                   
                     toast.error('Payment recorded but verification failed. Please contact support.');
                     navigate('/buyer');
                 }

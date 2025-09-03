@@ -13,7 +13,7 @@ const CloudinaryTestPage = () => {
   const { token } = useAuth();
 
   useEffect(() => {
-    // Get debug info on component mount
+  
     getDebugInfo();
   }, []);
 
