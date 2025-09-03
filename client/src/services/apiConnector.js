@@ -1,7 +1,7 @@
 import axios from "axios";
 
 export const axiosInstance = axios.create({
-  baseURL: "http://localhost:5000", // Match the PORT in server's config.env (PORT=5000)
+  baseURL: "https://green-hydrozen.vercel.app", // Match the PORT in server's config.env (PORT=5000)
   timeout: 30000, // 30 seconds timeout for larger payloads
   validateStatus: status => status < 500, // Only throw for server errors
   maxContentLength: 50 * 1024 * 1024, // 50MB max response size
